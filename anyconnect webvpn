@@ -1,0 +1,25 @@
+webvpn
+enable outside
+tunnel-group-list enable 
+anyconnect image disk0:/
+anyconnect enable 
+exit 
+username admin pass cisco123
+access-list ACL_VPN_R4 sta per host 4.4.4.4
+ip local pool POOL_VPN_R4 172.16.4.1-172.16.4.254 mask 255.255.255.0
+!
+group-policy GP_VPN_R4 internal
+group-policy GP_VPN_R4 attributes 
+ vpn-tunnel-protocol ssl-client
+ split-tunnel-policy tunnelspecified 
+ split-tunnel-network-list value ACL_VPN_R4
+ exit
+
+tunnel-group TG_VPN type remote-access
+tunnel-group TG_VPN general-attributes
+ default-group-policy GP_VPN_R4
+ address-pool POOL_VPN_R4
+exit
+tunnel-group TG_VPN webvpn-attributes
+group-alias TG_VPN enable
+logg enable
